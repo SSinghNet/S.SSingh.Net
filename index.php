@@ -38,11 +38,15 @@
                $isValid = true;
             }
        }
+
+       if( strcmp($_POST["originUrl"], "http://s.ssingh.net/" . $_POST["shortUrl"]) === 0){
+            $isValid = false; 
+       }
        if($isValid === true){
             insertLink($_POST["originUrl"], $_POST["shortUrl"]);    
-            $errorMsg = "Link Created: <a href='{$_POST['originUrl']}'>{$_POST['originUrl']}</a> shortened to <a href='http://short.ssingh.net/{$_POST['shortUrl']}'> short.ssingh.net/{$_POST['shortUrl']}</a>";              
+            $errorMsg = "Link Created: <a href='{$_POST['originUrl']}'>{$_POST['originUrl']}</a> shortened to <a href='http://s.ssingh.net/{$_POST['shortUrl']}'> s.ssingh.net/{$_POST['shortUrl']}</a>";              
        }else{
-            $errorMsg = "The short link <i>short.ssingh.net/{$_POST["shortUrl"]}</i> already exists, try something else.";
+            $errorMsg = "The short link <i>s.ssingh.net/{$_POST["shortUrl"]}</i> already exists, try something else.";
        }
 
     }
@@ -59,17 +63,17 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Short.SSingh.Net</title>
+        <title>S.SSingh.Net</title>
     </head>
     <body>
         <center>
-            <h1>Short.SSingh.Net</h1>
+            <h1>S.SSingh.Net</h1>
             <form action="/" method="post">
                 <h3>Original Url: (follow https://website.com/ format)</h3><br/>
                 <input type="text" name="originUrl" required pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)" value="<?php echo $_POST['originUrl']; ?>"> <br/>
 
                 <h3>Short Url: (alphanumeric characters only)</h3><br/>
-                <p>short.ssingh.net/<input type="text" name="shortUrl" required pattern="[a-zA-Z0-9/]+" value="<?php echo $_POST['shortUrl']; ?>"></p> <br />
+                <p>s.ssingh.net/<input type="text" name="shortUrl" required pattern="[a-zA-Z0-9/]+" value="<?php echo $_POST['shortUrl']; ?>"></p> <br />
 
                 <button>create</button>
             </form>
