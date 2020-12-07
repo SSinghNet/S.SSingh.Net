@@ -1,87 +1,72 @@
-<?php 
-    $errorMsg = "";
+<?php require_once("main.php");?>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>S.SSingh.Net</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+	<body class="is-preload">
 
-    //connect to db
-    require_once("dbinfo.php"); //all db info defined in this file
-    $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
-    if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-      exit;
-    }
+		<!-- Header -->
+			<header id="header">
+				<div class="inner">
+					<a href="#" class="image avatar"><img src="https://www.ssingh.net/images/slogo.png" alt="" /></a>
+					<h1><strong>S.SSingh.Net</strong><br/>A URL Shortener from SSingh.Net</h1>
+				</div>
+			</header>
 
-    //puts all url data from db into urls[] and then redirect based on values in urls[]
-    $urls = array();
-    $sql = "SELECT * FROM `urls`";
-    $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
-      while($row = $result->fetch_assoc()) {
-        if($row["shortUrl"] == $_SERVER["REQUEST_URI"]){
-            header("Location: " . $row["originUrl"]);
-        }
-        $urls[count($urls)] = array($row["id"], $row["originUrl"], $row["shortUrl"]);
-      }
-    }
+		<!-- Main -->
+			<div id="main">
 
-    // inserts link data into db 
-    function insertLink($originUrl, $shortUrl){
-        global $conn;
-        $sql = " INSERT INTO `urls`(`originUrl`, `shortUrl`) VALUES (\"{$originUrl}\", \"/{$shortUrl}\") ";
-        $conn->query($sql);
-    }
-    if(isset($_POST["shortUrl"]) && isset($_POST["originUrl"])){
-        $isValid = false;
-        foreach($urls as $url){
-            if(strcmp($url[2], "/" . $_POST["shortUrl"]) === 0){
-               $isValid = false;
-               break;
-            }else{
-               $isValid = true;
-            }
-       }
+				<!-- One -->
+					<section id="one">
+						<header class="major">
+							<center><h1 style="color: #E34444;"><?php echo $errorMsg ?></h1></center>
+						</header>
+						<form action="/" method="post">
+						    <div class="row gtr-uniform gtr-50">
+								<div class="col-6 col-12-xsmall">
+									<h3>Original Url:</h3><br/>
+									<input type="text" name="originUrl" required pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)" value="<?php echo $_POST['originUrl']; ?>"> 
+									<br/><h4><i>(follow https://website.com/ format)</i></h4>
+									<br/>
+								</div>
+								<div class="col-6 col-12-xsmall">
+									<h3>Short Url: (alphanumeric characters only)</h3>
+									<p>s.ssingh.net/<input type="text" name="shortUrl" required pattern="[a-zA-Z0-9/]+" value="<?php echo $_POST['shortUrl']; ?>"></p> <br />
+								</div>
+								<div class="col-12">
+									<center><input type="submit" value="Create Short Url" /></center>
+								</div>
+							</div>
+						</form>
+					</section>
 
-       if( strcmp($_POST["originUrl"], "http://s.ssingh.net/" . $_POST["shortUrl"]) === 0){
-            $isValid = false; 
-       }
-       if($isValid === true){
-            insertLink($_POST["originUrl"], $_POST["shortUrl"]);    
-            $errorMsg = "Link Created: <a href='{$_POST['originUrl']}'>{$_POST['originUrl']}</a> shortened to <a href='http://s.ssingh.net/{$_POST['shortUrl']}'> s.ssingh.net/{$_POST['shortUrl']}</a>";              
-       }else{
-            $errorMsg = "The short link <i>s.ssingh.net/{$_POST["shortUrl"]}</i> already exists, try something else.";
-       }
+				
+			</div>
 
-    }
-    
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="inner">
+					<ul class="icons">
+						<li><a href="https://github.com/SSinghNet/S.SSingh.Net" class="icon brands fa-github"><span class="label">Github</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; SSingh.Net</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
 
-    //if short link doesn't exist throw error
-    if($_SERVER["REQUEST_URI"] != "/"){
-        $errorMsg =  "<br />link not found, but you can create one";
-    }
-?>
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.poptrox.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>S.SSingh.Net</title>
-    </head>
-    <body>
-        <center>
-            <h1>S.SSingh.Net</h1>
-            <form action="/" method="post">
-                <h3>Original Url: (follow https://website.com/ format)</h3><br/>
-                <input type="text" name="originUrl" required pattern="https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)" value="<?php echo $_POST['originUrl']; ?>"> <br/>
-
-                <h3>Short Url: (alphanumeric characters only)</h3><br/>
-                <p>s.ssingh.net/<input type="text" name="shortUrl" required pattern="[a-zA-Z0-9/]+" value="<?php echo $_POST['shortUrl']; ?>"></p> <br />
-
-                <button>create</button>
-            </form>
-            <h1><?php echo $errorMsg ?></h1>
-        </center>
-        
-    </body>
+	</body>
 </html>
-<?php 
-    $conn->close(); 
-?>
+<?php $conn->close(); ?>
